@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 class Database:
     def __init__(self, db_path='data/database.db'):
@@ -20,7 +21,7 @@ class Database:
                 CREATE TABLE IF NOT EXISTS Avistamiento (
                     id INTEGER PRIMARY KEY,
                     confirmado_autoridades BOOLEAN,
-                    ubicacion TEXT NOT NULL,
+                    ubicacion TEXT NOT NULL,  -- This will store JSON data
                     fecha TEXT NOT NULL,
                     adulto BOOLEAN,
                     usuario_id INTEGER,
@@ -50,7 +51,7 @@ class Database:
     def insert_avistamiento(self, confirmado_autoridades, ubicacion, fecha, adulto, usuario_id):
         with self.conn:
             self.conn.execute('INSERT INTO Avistamiento (confirmado_autoridades, ubicacion, fecha, adulto, usuario_id) VALUES (?, ?, ?, ?, ?)', 
-                              (confirmado_autoridades, ubicacion, fecha, adulto, usuario_id))
+                              (confirmado_autoridades, json.dumps(ubicacion), fecha, adulto, usuario_id))
 
     def insert_imagen(self, archivo, miniatura, avistamiento_id):
         with self.conn:
@@ -66,6 +67,7 @@ class Database:
         with self.conn:
             cursor = self.conn.execute('SELECT * FROM Imagen')
             return cursor.fetchall()
+
 
 
 ### Database
